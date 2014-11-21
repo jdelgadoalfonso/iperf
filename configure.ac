@@ -30,7 +30,6 @@ AC_INIT(iperf, 3-CURRENT, https://github.com/esnet/iperf, iperf, http://software
 # directory is picked so that they don't clutter up more useful directories.
 AC_CONFIG_AUX_DIR(config)
 
-
 # Initialize the automake system
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
@@ -136,5 +135,16 @@ AC_CHECK_FUNCS([cpuset_setaffinity sched_setaffinity],
 # this system call, but they're all different in terms of what headers
 # it needs and what arguments it expects.
 AC_CHECK_FUNCS([sendfile])
+
+# Check for python support.
+m4_define([python2_required_version], [2.5.0])
+
+PYTHON2_REQUIRED_VERSION=python2_required_version
+AC_SUBST(PYTHON2_REQUIRED_VERSION)
+
+AM_PATH_PYTHON2(python2_required_version, ,
+								[AC_MSG_ERROR([pycheck_error([Python 2 (python2_required_version or newer)], [it])])])
+AM_CHECK_PYTHON_HEADERS(,
+												[AC_MSG_ERROR([pycheck_error([Python 2 headers], [them])])])
 
 AC_OUTPUT([Makefile src/Makefile src/version.h examples/Makefile iperf3.spec])
