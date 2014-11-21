@@ -4,6 +4,7 @@
 *.lo
 *.o
 *.orig
+*.swp
 *.Po
 /Makefile
 /autom4te.cache
@@ -28,3 +29,4 @@ examples/.libs
 examples/Makefile
 examples/mic
 examples/mis
+/cscope.out
