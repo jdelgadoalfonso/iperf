@@ -30,3 +30,6 @@ examples/Makefile
 examples/mic
 examples/mis
 /cscope.out
+aclocal.m4
+config/ltmain.sh
+configure
