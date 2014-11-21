@@ -6,6 +6,8 @@
 *.orig
 *.swp
 *.Po
+Makefile.in
+src/iperf_config.h.in
 /Makefile
 /autom4te.cache
 /config.log
