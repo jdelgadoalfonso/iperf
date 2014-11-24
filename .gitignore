@@ -18,6 +18,8 @@ docs/_static
 /libtool
 src/.deps
 src/.libs
+src/python/.deps
+src/python/.libs
 src/Makefile
 src/iperf_config.h
 src/version.h
