@@ -6,51 +6,51 @@ include_HEADERS         = iperf_api.h # Defines the headers that get installed w
 
 # Specify the source files and flags for the iperf library
 libiperf_la_SOURCES     = \
-                        cjson.c \
-                        cjson.h \
-                        flowlabel.h \
-                        iperf.h \
-                        iperf_api.c \
-                        iperf_api.h \
-                        iperf_error.c \
-			iperf_client_api.c \
-                        iperf_locale.c \
-                        iperf_locale.h \
-                        iperf_server_api.c \
-                        iperf_tcp.c \
-                        iperf_tcp.h \
-                        iperf_udp.c \
-                        iperf_udp.h \
-			iperf_sctp.c \
-	                iperf_sctp.h \
-                        iperf_util.c \
-                        iperf_util.h \
-                        net.c \
-                        net.h \
-                        queue.h \
-                        tcp_info.c \
-                        tcp_window_size.c \
-                        tcp_window_size.h \
-                        timer.c \
-                        timer.h \
-                        units.c \
-                        units.h \
-                        version.h
+													cjson.c \
+													cjson.h \
+													flowlabel.h \
+													iperf.h \
+													iperf_api.c \
+													iperf_api.h \
+													iperf_error.c \
+													iperf_client_api.c \
+													iperf_locale.c \
+													iperf_locale.h \
+													iperf_server_api.c \
+													iperf_tcp.c \
+													iperf_tcp.h \
+													iperf_udp.c \
+													iperf_udp.h \
+													iperf_sctp.c \
+													iperf_sctp.h \
+													iperf_util.c \
+													iperf_util.h \
+													net.c \
+													net.h \
+													queue.h \
+													tcp_info.c \
+													tcp_window_size.c \
+													tcp_window_size.h \
+													timer.c \
+													timer.h \
+													units.c \
+													units.h \
+													version.h
 
 # Specify the sources and various flags for the iperf binary
 iperf3_SOURCES          = main.c
-iperf3_CFLAGS           = -g
+iperf3_CFLAGS           =
 iperf3_LDADD            = libiperf.la
-iperf3_LDFLAGS          = -g
+iperf3_LDFLAGS          =
 
 # Specify the sources and various flags for the profiled iperf binary. This
 # binary recompiles all the source files to make sure they are all profiled.
 iperf3_profile_SOURCES  = main.c \
-						  $(libiperf_la_SOURCES)
+													$(libiperf_la_SOURCES)
 
-iperf3_profile_CFLAGS   = -pg -g
+iperf3_profile_CFLAGS   = -pg
 iperf3_profile_LDADD    = libiperf.la
-iperf3_profile_LDFLAGS  = -pg -g
+iperf3_profile_LDFLAGS  = -pg
 
 # Specify the sources and various flags for the test cases
 t_timer_SOURCES         = t_timer.c

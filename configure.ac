@@ -136,15 +136,32 @@ AC_CHECK_FUNCS([cpuset_setaffinity sched_setaffinity],
 # it needs and what arguments it expects.
 AC_CHECK_FUNCS([sendfile])
 
-# Check for python support.
-m4_define([python2_required_version], [2.5.0])
+dnl Check for enable/disable python module
+AC_ARG_ENABLE([python],
+    AS_HELP_STRING([--enable-python], [Enable feature Python]))
 
-PYTHON2_REQUIRED_VERSION=python2_required_version
-AC_SUBST(PYTHON2_REQUIRED_VERSION)
+AC_ARG_VAR([PYTHON_VERSION], [Version which will be looked for])
 
-AM_PATH_PYTHON2(python2_required_version, ,
-								[AC_MSG_ERROR([pycheck_error([Python 2 (python2_required_version or newer)], [it])])])
-AM_CHECK_PYTHON_HEADERS(,
-												[AC_MSG_ERROR([pycheck_error([Python 2 headers], [them])])])
+AS_IF([test "x$enable_python" = "xyes"], [
 
-AC_OUTPUT([Makefile src/Makefile src/version.h examples/Makefile iperf3.spec])
+	AC_CHECK_PROG(PKGCONFIG_CHECK,pkg-config,yes)
+	if test x"$PKGCONFIG_CHECK" != x"yes" ; then
+		AC_MSG_ERROR([Please install pkg-config before installing.])
+	fi
+
+	dnl Check for python support.
+	AS_IF([test "x$PYTHON_VERSION" = "x"],
+				[PYTHON_VERSION=2]
+	)
+	AM_PATH_PYTHON([${PYTHON_VERSION}])
+	AM_CHECK_PYTHON_HEADERS(,
+													[AC_MSG_ERROR([pycheck_error([Python headers], [them])])])
+])
+AM_CONDITIONAL([ENABLE_PYTHON], [test "x$enable_python" = "xyes"])
+
+AC_CONFIG_FILES([Makefile src/Makefile src/version.h examples/Makefile iperf3.spec])
+AS_IF([test "x$enable_python" = "xyes"],
+			[AC_CONFIG_FILES([src/python/Makefile])],
+)
+
+AC_OUTPUT
