@@ -3,7 +3,6 @@ pyexec_LTLIBRARIES				= pyiperf.la		 				          # Build and install an iperf 
 # Specify the source files and flags for the iperf library
 pyiperf_la_SOURCES				= \
 														iperf_python.c \
-														iperf_python.h \
 														cpython.c \
 														cpython.h
 

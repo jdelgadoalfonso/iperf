@@ -26,14 +26,18 @@
  */
 #include <Python.h>
 
+#include "cpython.h"
+
 #include "iperf.h"
-#include "iperf_python.h"
 #include "iperf_api.h"
 #include "iperf_util.h"
 #include "iperf_locale.h"
 #include "net.h"
 
+extern PyTypeObject iperf_IperfType;
+
 static PyObject *pyiperf_client(PyObject *self, PyObject *args);
+static int iperf_client(const char *host, int port);
 static int iperf_run(struct iperf_test * test);
 static jmp_buf sigend_jmp_buf;
 
@@ -51,7 +55,16 @@ static PyMethodDef module_methods[] = {
 PyMODINIT_FUNC
 initpyiperf(void)
 {
-	Py_InitModule3("pyiperf", module_methods, "Iperf3 module.");
+	PyObject* m = NULL;
+
+	if (PyType_Ready(&iperf_IperfType) >= 0) {
+		m = Py_InitModule3("pyiperf", module_methods, "Iperf3 module.");
+	}
+	
+	if (m) {
+		Py_INCREF(&iperf_IperfType);
+		PyModule_AddObject(m, "Iperf", (PyObject *) &iperf_IperfType);
+	}
 }
 
 static PyObject *
@@ -77,7 +90,7 @@ pyiperf_client(PyObject *self, PyObject *args)
 	return ret;
 }
 
-int
+static int
 iperf_client(const char *host, int port)
 {
 	int ret = 0;
