@@ -30,35 +30,41 @@
 #include "cpython.h"
 
 static void
-Iperf_dealloc(iperf_IperfObject* self)
+Iperf_dealloc(Iperf *self)
 {
 	Py_XDECREF(self->start);
 	Py_XDECREF(self->intervals);
 	Py_XDECREF(self->end);
-	self->ob_type->tp_free((PyObject*)self);
+	self->ob_type->tp_free((PyObject *) self);
 }
 
 static PyObject *
 Iperf_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	iperf_IperfObject *self;
+	Iperf *self;
 
-	self = (iperf_IperfObject *) type->tp_alloc(type, 0);
+	self = (Iperf *) type->tp_alloc(type, 0);
 	if (self) {
-		self->start = PyString_FromString("");
+		self->start = PyDict_New();
 		if (!self->start) {
 			Py_DECREF(self);
 			return NULL;
 		}
 
-    self->intervals = PyString_FromString("");
+    self->intervals = PyList_New(0);
     if (!self->intervals) {
 			Py_DECREF(self);
 			return NULL;
 		}
 
-    self->end = PyString_FromString("");
+    self->end = PyDict_New();
 		if (!self->end) {
+			Py_DECREF(self);
+			return NULL;
+		}
+		
+		self->error = PyString_FromString("");
+		if (!self->error) {
 			Py_DECREF(self);
 			return NULL;
 		}
@@ -67,14 +73,14 @@ Iperf_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 static int
-Iperf_init(iperf_IperfObject *self, PyObject *args, PyObject *kwds)
+Iperf_init(Iperf *self, PyObject *args, PyObject *kwds)
 {
-	PyObject *start = NULL, *intervals = NULL, *end = NULL, *tmp;
+	PyObject *start = NULL, *intervals = NULL, *end = NULL, *error = NULL, *tmp;
 
-	static char *kwlist[] = {"start", "intervals", "end", NULL};
+	static char *kwlist[] = { "start", "intervals", "end", "error", NULL };
 
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "|OOO", kwlist, 
-																		&start, &intervals, &end) )
+	if (! PyArg_ParseTupleAndKeywords(args, kwds, "|OOOO", kwlist, 
+																		&start, &intervals, &end, &error) )
 		return -1; 
 
 	if (start) {
@@ -98,15 +104,24 @@ Iperf_init(iperf_IperfObject *self, PyObject *args, PyObject *kwds)
 		Py_XDECREF(tmp);
 	}
 
+	if (error) {
+		tmp = self->error;
+		Py_INCREF(error);
+		self->error = error;
+		Py_XDECREF(tmp);
+	}
+
 	return 0;
 }
 
 static PyMemberDef Iperf_members[] = {
-	{ "start", T_OBJECT_EX, offsetof(iperf_IperfObject, start), 0,
+	{ "start", T_OBJECT_EX, offsetof(Iperf, start), 0,
 		"first name" },
-	{ "intervals", T_OBJECT_EX, offsetof(iperf_IperfObject, intervals), 0,
+	{ "intervals", T_OBJECT_EX, offsetof(Iperf, intervals), 0,
 		"last name" },
-	{ "end", T_OBJECT_EX, offsetof(iperf_IperfObject, end), 0,
+	{ "end", T_OBJECT_EX, offsetof(Iperf, end), 0,
+		"noddy number" },	
+	{ "error", T_OBJECT_EX, offsetof(Iperf, error), 0,
 		"noddy number" },
 	{ NULL }  /* Sentinel */
 };
@@ -115,11 +130,11 @@ static PyMethodDef Iperf_methods[] = {
 	{ NULL }  /* Sentinel */
 };
 
-PyTypeObject iperf_IperfType = {
+PyTypeObject iperfType = {
 	PyObject_HEAD_INIT(NULL)
 	0,                          /* ob_size */
 	"iperf.Iperf",              /* tp_name */
-	sizeof(iperf_IperfObject),  /* tp_basicsize */
+	sizeof(Iperf),              /* tp_basicsize */
 	0,                          /* tp_itemsize */
 	(destructor) Iperf_dealloc, /* tp_dealloc */
 	0,                          /* tp_print */
@@ -157,3 +172,27 @@ PyTypeObject iperf_IperfType = {
 	0,                          /* tp_alloc */
 	Iperf_new,                  /* tp_new */
 };
+
+static PyObject *
+cPython_CreateIperfObject() {
+	/* Call the class object. */
+	PyObject *obj = PyObject_CallObject((PyObject *) &iperfType, null);
+
+	return obj;
+}
+
+static int
+cPython_addItemToDict
+(PyObject *o, const char *attr_name, const char *key, PyObject *val) {
+	int fail = -1;
+	PyObject *attr = PyObject_GetAttrString(o, attr_name);
+	if (PyDict_Check(attr)) {
+		if (PyDict_SetItemString(attr, key, val)) {
+			if (!PyErr_Occurred()) {
+				fail++;
+			}
+		}
+	}
+	Py_XDECREF(attr);
+	return fail;
+}

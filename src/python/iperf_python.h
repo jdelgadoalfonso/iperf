@@ -24,26 +24,11 @@
  * This code is distributed under a BSD style license, see the LICENSE
  * file for complete information.
  */
-#ifndef        __CPYTHON_H
-#define        __CPYTHON_H
+#ifndef        __IPERF_PYTHON_H
+#define        __IPERF_PYTHON_H
 
 #include <Python.h>
 
-#ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
-#define PyMODINIT_FUNC void
-#endif
-
-typedef struct {
-	PyObject_HEAD
-	PyObject *start;
-	PyObject *intervals;
-	PyObject *end;
-	PyObject *error;
-	/* Type-specific fields go here. */
-} Iperf;
-
-PyObject *cPython_CreateObject();
-int cPython_addItemToDict(
-		PyObject *o, const char *attr_name, const char *key, PyObject *val);
+PyObject *pyiperf_client(PyObject *self, PyObject *args);
 
 #endif

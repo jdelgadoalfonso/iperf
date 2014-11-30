@@ -21,29 +21,16 @@
  * prepare derivative works, distribute copies to the public, perform
  * publicly and display publicly, and to permit others to do so.
  *
- * This code is distributed under a BSD style license, see the LICENSE
- * file for complete information.
+ * This code is distributed under a BSD style license, see the LICENSE file
+ * for complete information.
  */
-#ifndef        __CPYTHON_H
-#define        __CPYTHON_H
+#ifndef        __IPERF_HANDLER_H
+#define        __IPERF_HANDLER_H
 
-#include <Python.h>
+#include "iperf.h"
 
-#ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
-#define PyMODINIT_FUNC void
-#endif
-
-typedef struct {
-	PyObject_HEAD
-	PyObject *start;
-	PyObject *intervals;
-	PyObject *end;
-	PyObject *error;
-	/* Type-specific fields go here. */
-} Iperf;
-
-PyObject *cPython_CreateObject();
-int cPython_addItemToDict(
-		PyObject *o, const char *attr_name, const char *key, PyObject *val);
+int iperf_client(const char *host, int port);
+int iperf_run(struct iperf_test * test);
+void iperf_on_test_start(struct iperf_test *test);
 
 #endif
