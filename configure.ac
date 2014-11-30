@@ -156,6 +156,7 @@ AS_IF([test "x$enable_python" = "xyes"], [
 	AM_PATH_PYTHON([${PYTHON_VERSION}])
 	AM_CHECK_PYTHON_HEADERS(,
 													[AC_MSG_ERROR([pycheck_error([Python headers], [them])])])
+	AC_DEFINE([HAVE_PYTHON], [1], [Have Pyhon support.])
 ])
 AM_CONDITIONAL([ENABLE_PYTHON], [test "x$enable_python" = "xyes"])
 
