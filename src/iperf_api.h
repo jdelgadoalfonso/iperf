@@ -255,6 +255,10 @@ int iperf_clearaffinity(struct iperf_test *);
 int iprintf(struct iperf_test *test, const char *format, ...) __attribute__ ((format(printf,2,3)));
 int iflush(struct iperf_test *test);
 
+void mapped_v4_to_regular_v4(char *str);
+void iperf_print_intermediate(struct iperf_test *test);
+void iperf_print_results(struct iperf_test *test);
+
 /* Error routines. */
 void iperf_err(struct iperf_test *test, const char *format, ...) __attribute__ ((format(printf,2,3)));
 void iperf_errexit(struct iperf_test *test, const char *format, ...) __attribute__ ((format(printf,2,3),noreturn));

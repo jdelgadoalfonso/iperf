@@ -176,7 +176,7 @@ PyTypeObject iperfType = {
 static PyObject *
 cPython_CreateIperfObject() {
 	/* Call the class object. */
-	PyObject *obj = PyObject_CallObject((PyObject *) &iperfType, null);
+	PyObject *obj = PyObject_CallObject((PyObject *) &iperfType, NULL);
 
 	return obj;
 }

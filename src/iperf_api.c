@@ -483,7 +483,7 @@ iperf_on_test_start(struct iperf_test *test)
 **
 ** If the v6 address is not v4-mapped it is left alone.
 */
-static void
+void
 mapped_v4_to_regular_v4(char *str)
 {
     char *prefix = "::ffff:";
@@ -2062,7 +2062,7 @@ iperf_stats_callback(struct iperf_test *test)
  * then prints an interval summary for all streams in this
  * interval.
  */
-static void
+void
 iperf_print_intermediate(struct iperf_test *test)
 {
     char ubuf[UNIT_LEN];
@@ -2162,7 +2162,7 @@ iperf_print_intermediate(struct iperf_test *test)
 /**
  * Print overall summary statistics at the end of a test.
  */
-static void
+void
 iperf_print_results(struct iperf_test *test)
 {
 

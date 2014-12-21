@@ -25,15 +25,18 @@
  * for complete information.
  */
 #include <Python.h>
+#include <arpa/inet.h>
 
 #include "iperf.h"
 #include "iperf_api.h"
 #include "iperf_util.h"
 #include "iperf_locale.h"
 #include "net.h"
+#include "iperf_handlers.h"
+#include "units.h"
 
 static jmp_buf sigend_jmp_buf;
-	
+
 static void
 sigend_handler(int sig)
 {
@@ -53,6 +56,14 @@ iperf_client(const char *host, int port)
 		return -1;
 	}
 	iperf_defaults(test);	/* sets defaults */
+
+	/* Adding handlers for python wrapper */
+	test->on_new_stream = pyiperf_on_new_stream;
+	test->on_test_start = pyiperf_on_test_start;
+	test->on_connect = pyiperf_on_connect;
+	test->on_test_finish = pyiperf_on_test_finish;
+	test->reporter_callback = pyiperf_reporter_callback;
+
 	iperf_set_test_role(test, 'c');
 	iperf_set_test_server_hostname(test, (char *) host);
 	test->server_port = port;
@@ -201,7 +212,7 @@ iperf_run(struct iperf_test * test)
 }
 
 void
-iperf_on_test_start(struct iperf_test *test)
+pyiperf_on_test_start(struct iperf_test *test)
 {
 	if (test->json_output) {
 		cJSON_AddItemToObject(test->json_start,
@@ -222,7 +233,7 @@ iperf_on_test_start(struct iperf_test *test)
 }
 
 void
-iperf_on_connect(struct iperf_test *test)
+pyiperf_on_connect(struct iperf_test *test)
 {
 	time_t now_secs;
 	const char* rfc1123_fmt = "%a, %d %b %Y %H:%M:%S GMT";
@@ -271,6 +282,7 @@ iperf_on_connect(struct iperf_test *test)
 	} else {
 	  iprintf(test, report_accepted, ipr, port);
   }
+	}
   if (test->json_output) {
 		cJSON_AddStringToObject(test->json_start, "cookie", test->cookie);
     if (test->protocol->id == SOCK_STREAM) {
@@ -297,13 +309,13 @@ iperf_on_connect(struct iperf_test *test)
 }
 
 void
-iperf_on_new_stream(struct iperf_stream *sp)
+pyiperf_on_new_stream(struct iperf_stream *sp)
 {
 	connect_msg(sp);
 }
 
 void
-iperf_on_test_finish(struct iperf_test *test)
+pyiperf_on_test_finish(struct iperf_test *test)
 {
 }
 
@@ -314,7 +326,7 @@ iperf_on_test_finish(struct iperf_test *test)
  * overall summary).
  */
 void
-iperf_reporter_callback(struct iperf_test *test)
+pyiperf_reporter_callback(struct iperf_test *test)
 {
 	switch (test->state) {
 		case TEST_RUNNING:

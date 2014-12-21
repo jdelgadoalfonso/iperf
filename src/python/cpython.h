@@ -19,7 +19,12 @@
  * and others acting on its behalf a paid-up, nonexclusive,
  * irrevocable, worldwide license in the Software to reproduce,
  * prepare derivative works, distribute copies to the public, perform
- * publicly and display publicly, and to permit others to do so.
+ * publicly and display publicvoid
+iperf_on_new_stream(struct iperf_stream *sp)
+{
+    connect_msg(sp);
+}
+ly, and to permit others to do so.
  *
  * This code is distributed under a BSD style license, see the LICENSE
  * file for complete information.
@@ -41,9 +46,5 @@ typedef struct {
 	PyObject *error;
 	/* Type-specific fields go here. */
 } Iperf;
-
-PyObject *cPython_CreateObject();
-int cPython_addItemToDict(
-		PyObject *o, const char *attr_name, const char *key, PyObject *val);
 
 #endif

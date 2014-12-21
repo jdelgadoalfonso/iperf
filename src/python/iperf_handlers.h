@@ -31,6 +31,11 @@
 
 int iperf_client(const char *host, int port);
 int iperf_run(struct iperf_test * test);
-void iperf_on_test_start(struct iperf_test *test);
+
+void pyiperf_on_test_start(struct iperf_test *test);
+void pyiperf_on_connect(struct iperf_test *test);
+void pyiperf_on_new_stream(struct iperf_stream *sp);
+void pyiperf_on_test_finish(struct iperf_test *test);
+void pyiperf_reporter_callback(struct iperf_test *test);
 
 #endif
